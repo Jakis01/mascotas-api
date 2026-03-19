@@ -1,11 +1,12 @@
-# Usamos una imagen de Java 17 (o la versión que uses)
-FROM eclipse-temurin:17-jdk-alpine
-
-# Creamos una carpeta para la app
+# Etapa 1: Construcción con Maven
+FROM maven:3.8.5-openjdk-17 AS build
 WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
 
-# Copiamos el archivo .jar que genera Maven
-COPY target/*.jar app.jar
-
-# Comando para arrancar la aplicación
+# Etapa 2: Ejecución
+FROM eclipse-temurin:17-jdk-alpine
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
