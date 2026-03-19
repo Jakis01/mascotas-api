@@ -1,6 +1,7 @@
 package com.example.mascotas.mascotas;
 
 import com.example.mascotas.clientes.Cliente;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.persistence.Entity;
@@ -32,5 +33,6 @@ public class Mascota {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "idCliente")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonIgnore
     private Cliente cliente;
 }

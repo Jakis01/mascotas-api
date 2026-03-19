@@ -10,8 +10,8 @@ import java.net.URI;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/cliente")
-
 public class ClienteController {
 
     @Autowired
