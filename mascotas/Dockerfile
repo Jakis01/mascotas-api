@@ -1,13 +1,11 @@
-FROM eclipse-temurin:17-jdk
+# Usamos una imagen de Java 17 (o la versión que uses)
+FROM eclipse-temurin:17-jdk-alpine
 
+# Creamos una carpeta para la app
 WORKDIR /app
 
-COPY . .
+# Copiamos el archivo .jar que genera Maven
+COPY target/*.jar app.jar
 
-RUN chmod +x mvnw
-RUN ./mvnw clean package -DskipTests
-
-EXPOSE 8080
-
-CMD ["java","-jar","target/mascotas-0.0.1-SNAPSHOT.jar"]
-
+# Comando para arrancar la aplicación
+ENTRYPOINT ["java", "-jar", "app.jar"]
