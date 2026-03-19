@@ -25,14 +25,13 @@ public class Mascota {
     private String nombre;
     private char sexo;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = true, length = 100)
     private String tipo;
     private byte edad;
     private boolean enPeligro;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "idCliente")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "idCliente", nullable = true)
     @JsonIgnore
     private Cliente cliente;
 }
