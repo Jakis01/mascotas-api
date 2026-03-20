@@ -1,33 +1,45 @@
 package com.example.mascotas.mascotas;
-
+import com.example.mascotas.mascotas.Mascota;
+import com.example.mascotas.mascotas.MascotaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "*") // Permite que Netlify se conecte
-@RequestMapping("/mascota") // Ruta en PLURAL para coincidir con React
+@CrossOrigin(origins = "*")
+@RequestMapping("/mascota")
 public class MascotaController {
 
     @Autowired
     private MascotaRepository mascotaRepository;
 
-    // 1. Ver todas las mascotas
+    @Autowired
+    private com.example.mascotas.clientes.ClienteRepository clienteRepository; // Inyectamos el repo de clientes
+
     @GetMapping
     public ResponseEntity<Iterable<Mascota>> findAll() {
         return ResponseEntity.ok(mascotaRepository.findAll());
     }
 
-    // 2. Crear mascota (SIMPLIFICADO PARA TU TAREA)
     @PostMapping
-    public ResponseEntity<Mascota> create(@RequestBody Mascota mascota) {
-        // Guardamos la mascota directamente sin validar cliente por ahora
-        Mascota mascotaGuardada = mascotaRepository.save(mascota);
-        return ResponseEntity.ok(mascotaGuardada);
+    public ResponseEntity<?> create(@RequestBody Mascota mascota) {
+        // 1. Verificamos si la mascota trae un cliente asociado
+        if (mascota.getCliente() != null && mascota.getCliente().getIdCliente() != null) {
+            Long idCliente = mascota.getCliente().getIdCliente();
+
+            // 2. Buscamos al cliente real en la DB
+            return clienteRepository.findById(idCliente)
+                    .map(cliente -> {
+                        mascota.setCliente(cliente); // 3. Vinculamos el cliente persistente
+                        Mascota guardada = mascotaRepository.save(mascota);
+                        return ResponseEntity.ok(guardada);
+                    })
+                    .orElse(ResponseEntity.badRequest().build()); // Error si el ID no existe
+        }
+
+        return ResponseEntity.badRequest().body("La mascota debe tener un dueño válido.");
     }
 
-    // 3. Eliminar mascota (Útil para limpiar tu lista)
     @DeleteMapping("/{idMascota}")
     public ResponseEntity<Void> delete(@PathVariable Long idMascota) {
         if (mascotaRepository.existsById(idMascota)) {
