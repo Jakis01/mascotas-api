@@ -29,12 +29,12 @@ public class MascotaServicio {
 
     @ManyToOne
     @JoinColumn(name = "idMascota")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+
     private Mascota mascota;
 
     @ManyToOne
     @JoinColumn(name = "idServicio")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+
     private Servicio servicio;
 
 }
